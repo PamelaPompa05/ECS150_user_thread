@@ -6,10 +6,8 @@
 #include "queue.h"
 
 /*
-
 queue_t = "struct queue*" (avoids having to type both things every time)
 **it's a pointer to a struct queue**
-
 */
 
 struct node {
@@ -110,7 +108,7 @@ int queue_delete(queue_t queue, void *data)
 			if(iterator == queue->head){ //if deleting the head node
 				queue->head = iterator->next;
 				if(queue->head == NULL){ //if queue is now empty
-					queue->tail == NULL;
+					queue->tail = NULL;
 				}
 			}
 			else{ 
