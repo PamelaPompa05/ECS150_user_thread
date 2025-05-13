@@ -47,16 +47,16 @@ int sem_down(sem_t sem)
 		return -1;
 	}
 
-	if(sem->count > 0){ //if we have enough resources
-		sem->count--;
-	}
-	else{ 				 //add to blocked queue
-		struct uthread_tcb *current_thread = uthread_current(); //find the current thread
-		queue_enqueue(sem->blocked_queue, current_thread);	    //add the current thread to our blocked queue
-		uthread_block(); 										//block the current thread (from the private API)
-	}
-	return 0;
 
+	/*fix for the corner case*/
+	while (sem->count == 0){  //keep checking until a resource is available (the blocked thread resumes control here when switched back)
+        struct uthread_tcb *current_thread = uthread_current(); // find the current thread
+        queue_enqueue(sem->blocked_queue, current_thread);      // add the current thread to our blocked thread
+        uthread_block();										// block the current thread (from the private API) & yields
+    }
+
+	sem->count--;  //finally take the resource once it's available
+    return 0;
 }
 
 int sem_up(sem_t sem)
@@ -70,6 +70,7 @@ int sem_up(sem_t sem)
 		struct uthread_tcb *thread_to_be_unblocked;
 		queue_dequeue(sem->blocked_queue, (void**)&thread_to_be_unblocked); //dequeue the oldest thread
 
+		sem->count++;
 		uthread_unblock(thread_to_be_unblocked);
 	}
 	else{
@@ -77,7 +78,5 @@ int sem_up(sem_t sem)
 	}
 
 	return 0;
-
-	/*might still need to fix that one case*/
 }
 
