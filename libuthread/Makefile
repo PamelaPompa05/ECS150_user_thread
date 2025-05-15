@@ -1,6 +1,6 @@
 # Target library
 lib := libuthread.a
-objs := queue.o context.o uthread.o sem.o
+objs := queue.o context.o uthread.o sem.o preempt.o
 CCFLAGS := -Wall -Wextra -Werror -MMD
 
 all: $(lib) #libuthread.a is the target
@@ -12,7 +12,7 @@ $(lib): $(objs)
 	ar rcs $(lib) $(objs)
 
 clean:
-	rm -f $(objs) $(lib)
+	rm -f $(objs) $(lib) *.d *.x
 
 ## From what I understand, a target library only wants object files and they're part of the library
 
