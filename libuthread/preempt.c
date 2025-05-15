@@ -86,14 +86,9 @@ void preempt_start(bool preempt)
 	
 	if(!preempt){ return; }
 
-	struct sigaction sa; 	  //the struct is declared in <signal.h>
+	struct sigaction sa;   //the struct is declared in <signal.h>
 	sa.sa_handler = handler;  //this is our signal handler function
-
-	sigset_t mask;
-    sigemptyset(&mask);			 //initialize no blocked signals
-    sigaddset(&mask, SIGVTALRM); //add SIGVTALRM to the set
-    sigprocmask(SIG_UNBLOCK, &mask, NULL); //unblock SIGVTALRM
-	sa.sa_mask = mask;
+	sigemptyset(&sa.sa_mask); //dont block any signals when SIGVTALRM is handled
 	sa.sa_flags = SA_NODEFER | SA_RESTART; //don't block the signal while the handler is running, and dont block system calls with the signal
 
 	if(sigaction(SIGVTALRM, &sa, NULL) == -1){ //Our sa struct's handler function receive SIGVTALRM alarm signals
