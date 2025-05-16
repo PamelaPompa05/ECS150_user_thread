@@ -172,7 +172,7 @@ int uthread_run(bool preempt, uthread_func_t func, void *arg)
     if (getcontext(idle_uctx) < 0)
         return -1;
 
-    // install TCB for idle  thread 
+    // install TCB for current thread
     current = malloc(sizeof(*current));
     if (!current)
         return -1;
